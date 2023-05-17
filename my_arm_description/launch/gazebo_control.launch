@@ -1,0 +1,20 @@
+<launch>
+
+  <param name="robot_description" command="$(find xacro)/xacro $(find my_arm_description)/urdf/robot_arm.xacro"/>
+
+  <include file="$(find gazebo_ros)/launch/empty_world.launch"/>
+
+  <node name="spawn_urdf" pkg="gazebo_ros" type="spawn_model" args="-param robot_description -urdf -model my_arm"/>
+
+  <rosparam file="$(find my_arm_description)/config/controller.yaml" command="load"/>
+
+  <!-- <node name="JSP" pkg="joint_state_publisher" type="joint_state_publisher" output="screen"/> -->
+  <node name="RSP" pkg="robot_state_publisher" type="robot_state_publisher" output="screen"/>
+
+  <node name="controller_spawner" pkg="controller_manager" type="spawner"
+      args="joint_group_pos_controller gripper_group_controller joint_state_controller"/>
+
+  <arg name="rvizconfig" default="$(find my_arm_description)/rviz/display.rviz"/>
+  <node name="rviz" pkg="rviz" args="-d $(arg rvizconfig)" type="rviz"/>
+
+</launch>

@@ -1,0 +1,72 @@
+
+# Publish all joint states -----------------------------------
+joint_state_controller:
+  type: joint_state_controller/JointStateController
+  publish_rate: 50
+  joints:
+    - joint_1
+    - joint_2
+    - joint_3
+    - joint_4
+    - joint_5
+    - hand_joint1
+    - hand_grip_joint1
+    - gripper_joint
+    - hand_grip_joint2
+    - mid_joint_1
+    - mid_joint_2
+
+gripper_state_controller:
+  type: joint_state_controller/JointStateController
+  publish_rate: 50
+  joints:
+    - hand_joint1
+    - hand_grip_joint1
+    - gripper_joint
+    - hand_grip_joint2
+    - mid_joint_1
+    - mid_joint_2
+
+# Position Controllers --------------------------------------
+joint_group_pos_controller:
+  type: position_controllers/JointGroupPositionController
+  joints:
+    - joint_1
+    - joint_2
+    - joint_3
+    - joint_4
+    - joint_5
+
+# Gripper Position Controllers --------------------------------------
+gripper_group_controller:
+  type: position_controllers/JointGroupPositionController
+  joints:
+    - hand_joint1
+    - hand_grip_joint1
+    - gripper_joint
+    - hand_grip_joint2
+    - mid_joint_1
+    - mid_joint_2
+
+# Trajectory Controllers --------------------------------------
+pos_joint_traj_controller:
+  type: position_controllers/JointTrajectoryController
+  joints:
+    - joint_1
+    - joint_2
+    - joint_3
+    - joint_4
+    - joint_5
+  constraints:
+    goal_time: 0.6
+    stopped_velocity_tolerance: 0.05
+    shoulder_pan_joint: {trajectory: 0.1, goal: 0.1}
+    shoulder_lift_joint: {trajectory: 0.1, goal: 0.1}
+    elbow_joint: {trajectory: 0.1, goal: 0.1}
+    wrist_1_joint: {trajectory: 0.1, goal: 0.1}
+    wrist_2_joint: {trajectory: 0.1, goal: 0.1}
+    wrist_3_joint: {trajectory: 0.1, goal: 0.1}
+  stop_trajectory_duration: 0.5
+  state_publish_rate: 50
+  action_monitor_rate: 10
+

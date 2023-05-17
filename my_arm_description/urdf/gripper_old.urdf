@@ -1,0 +1,409 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- This URDF was automatically created by SolidWorks to URDF Exporter! Originally created by Stephen Brawner (brawner@gmail.com) 
+     Commit Version: 1.6.0-4-g7f85cfe  Build Version: 1.6.7995.38578
+     For more information, please see http://wiki.ros.org/sw_urdf_exporter -->
+<robot
+  name="gripper">
+  <link
+    name="grip_base_link">
+    <inertial>
+      <origin
+        xyz="-0.020531 -0.021072 0.02563"
+        rpy="0 0 0" />
+      <mass
+        value="0.0367" />
+      <inertia
+        ixx="5.4785E-06"
+        ixy="-5.5445E-08"
+        ixz="-8.0352E-09"
+        iyy="7.0866E-06"
+        iyz="-7.7291E-13"
+        izz="9.4579E-06" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://gripper/meshes/grip_base_link.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.89804 0.92157 0.92941 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://gripper/meshes/grip_base_link.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <link
+    name="hand_link1">
+    <inertial>
+      <origin
+        xyz="-0.00523492547000686 0.00492501926066897 -0.00100000000000003"
+        rpy="0 0 0" />
+      <mass
+        value="0.00142065726893586" />
+      <inertia
+        ixx="1.22964066308207E-07"
+        ixy="8.46203793647206E-08"
+        ixz="3.23650142493458E-27"
+        iyy="1.33298297071557E-07"
+        iyz="-7.87479068447034E-25"
+        izz="2.55315258533807E-07" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://gripper/meshes/hand_link1.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.898039215686275 0.92156862745098 0.929411764705882 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://gripper/meshes/hand_link1.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="hand_joint1"
+    type="revolute">
+    <origin
+      xyz="0.015 0.00535 0.02625"
+      rpy="1.5708 0 3.1416" />
+    <parent
+      link="grip_base_link" />
+    <child
+      link="hand_link1" />
+    <axis
+      xyz="0 0 1" />
+    <limit
+      lower="0.5"
+      upper="-0.5"
+      effort="10"
+      velocity="10" />
+    <mimic joint="hand_joint2" multiplier="1" />
+  </joint>
+  <link
+    name="hand_grip1">
+    <inertial>
+      <origin
+        xyz="0.00594567238082101 0.0203210851839823 -0.00399999969237515"
+        rpy="0 0 0" />
+      <mass
+        value="0.00187045062582082" />
+      <inertia
+        ixx="4.0782602368236E-07"
+        ixy="-7.95845983485053E-08"
+        ixz="-1.31395403259131E-14"
+        iyy="3.53476941089525E-08"
+        iyz="-2.03499073074993E-14"
+        izz="4.38185846898205E-07" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://gripper/meshes/hand_grip1.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.898039215686275 0.92156862745098 0.929411764705882 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://gripper/meshes/hand_grip1.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="hand_grip_joint1"
+    type="revolute">
+    <origin
+      xyz="-0.021122 0.019871 0"
+      rpy="0 0 0" />
+    <parent
+      link="hand_link1" />
+    <child
+      link="hand_grip1" />
+    <axis
+      xyz="0 0 1" />
+    <limit
+      lower="0.5"
+      upper="-0.5"
+      effort="10"
+      velocity="10" />
+    <mimic joint="hand_joint1" multiplier="-1" />
+  </joint>
+  <link
+    name="hand_link2">
+    <inertial>
+      <origin
+        xyz="0.00521580581542747 0.00494526329837284 -0.00100000000000003"
+        rpy="0 0 0" />
+      <mass
+        value="0.00142065726893586" />
+      <inertia
+        ixx="1.2361988419095E-07"
+        ixy="-8.46578754757815E-08"
+        ixz="6.873768146667E-25"
+        iyy="1.32642479188815E-07"
+        iyz="7.7917326290555E-25"
+        izz="2.55315258533807E-07" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://gripper/meshes/hand_link2.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.898039215686275 0.92156862745098 0.929411764705882 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://gripper/meshes/hand_link2.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="hand_joint2"
+    type="revolute">
+    <origin
+      xyz="-0.013 0.00535 0.02625"
+      rpy="1.5708 0 3.1416" />
+    <parent
+      link="grip_base_link" />
+    <child
+      link="hand_link2" />
+    <axis
+      xyz="0 0 -1" />
+    <limit
+      lower="0.5"
+      upper="-0.5"
+      effort="10"
+      velocity="10" />
+  </joint>
+  <link
+    name="hand_grip2">
+    <inertial>
+      <origin
+        xyz="-0.00445045993813949 0.020700021082788 -0.00400000030762493"
+        rpy="0 0 0" />
+      <mass
+        value="0.00187045056346137" />
+      <inertia
+        ixx="4.17408949625888E-07"
+        ixy="5.16953875644496E-08"
+        ixz="-1.17218822252589E-14"
+        iyy="2.57647082341614E-08"
+        iyz="2.12711331247855E-14"
+        izz="4.38185787066717E-07" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://gripper/meshes/hand_grip2.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.898039215686275 0.92156862745098 0.929411764705882 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://gripper/meshes/hand_grip2.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="hand_grip_joint2"
+    type="revolute">
+    <origin
+      xyz="0.021045 0.019953 0"
+      rpy="0 0 0" />
+    <parent
+      link="hand_link2" />
+    <child
+      link="hand_grip2" />
+    <axis
+      xyz="0 0 -1" />
+    <limit
+      lower="0.4"
+      upper="-0.4"
+      effort="10"
+      velocity="10" />
+    <mimic joint="hand_joint2" multiplier="-1" />
+  </joint>
+  <link
+    name="mid_link1">
+    <inertial>
+      <origin
+        xyz="-0.0113240288488907 0.00983698991711786 -0.00100000000000003"
+        rpy="0 0 0" />
+      <mass
+        value="0.000310995574287565" />
+      <inertia
+        ixx="1.1783554463848E-08"
+        ixy="1.26737094661928E-08"
+        ixz="7.03369446242362E-26"
+        iyy="1.53636899711256E-08"
+        iyz="3.46383537128379E-26"
+        izz="2.69399140521153E-08" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://gripper/meshes/mid_link1.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.898039215686275 0.92156862745098 0.929411764705882 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://gripper/meshes/mid_link1.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="mid_joint_1"
+    type="revolute">
+    <origin
+      xyz="0.005 0.00535 0.04675"
+      rpy="1.5708 0 3.1416" />
+    <parent
+      link="grip_base_link" />
+    <child
+      link="mid_link1" />
+    <axis
+      xyz="0 0 -1" />
+    <limit
+      lower="0.6"
+      upper="-0.6"
+      effort="10"
+      velocity="10" />
+    <mimic joint="hand_joint2" multiplier="-1" />
+  </joint>
+  <link
+    name="mid_link2">
+    <inertial>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <mass
+        value="0" />
+      <inertia
+        ixx="0"
+        ixy="0"
+        ixz="0"
+        iyy="0"
+        iyz="0"
+        izz="0" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://gripper/meshes/mid_link2.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="1 1 1 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://gripper/meshes/mid_link2.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="mid_joint2"
+    type="revolute">
+    <origin
+      xyz="-0.005 0.00535 0.04675"
+      rpy="1.5708 0 3.1416" />
+    <parent
+      link="grip_base_link" />
+    <child
+      link="mid_link2" />
+    <axis
+      xyz="0 0 -1" />
+    <limit
+      lower="0.6"
+      upper="-0.6"
+      effort="10"
+      velocity="10" />
+    <mimic joint="hand_joint2" multiplier="1" />
+  </joint>
+
+  <link name="tool_link" />
+
+  <joint name="Revolute 100" type="fixed">
+    <origin xyz="0.2 0 0" rpy="0 0 0"/>
+    <parent link="grip_base_link"/>
+    <child link="tool_link"/>
+  </joint>
+
+</robot>

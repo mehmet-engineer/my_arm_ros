@@ -1,0 +1,5 @@
+<launch>
+
+  <node name="gripper_commander" pkg="my_arm_description" type="gripper_commander.py" output="screen" />
+
+</launch>
