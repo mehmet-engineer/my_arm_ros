@@ -1,0 +1,193 @@
+#include <ros.h>
+#include <Servo.h>
+#include <std_msgs/UInt16MultiArray.h>
+#include <std_msgs/UInt8.h>
+
+// ROS Serial Arduino Library v0.7.9
+
+// ros definitions
+ros::NodeHandle nh;
+std_msgs::UInt8 pos_msg;
+std_msgs::UInt16MultiArray angle_command_msg;
+std_msgs::UInt8 js0_msg;
+std_msgs::UInt8 js1_msg;
+std_msgs::UInt8 js2_msg;
+std_msgs::UInt8 js3_msg;
+std_msgs::UInt8 js4_msg;
+std_msgs::UInt8 js5_grip_msg;
+
+void pos_callback(const std_msgs::UInt8 &pos_msg) {
+  if (pos_msg.data == 1) {
+    go_closing_pose();
+  }
+  if (pos_msg.data == 2) {
+    go_up_home();
+  }
+}
+
+void pos_command_callback(const std_msgs::UInt16MultiArray &angle_command_msg) {
+  go_to_target(angle_command_msg.data[0], angle_command_msg.data[1], angle_command_msg.data[2], angle_command_msg.data[3], angle_command_msg.data[4]);
+}
+
+ros::Publisher js0_publisher("/joint_0_state", &js0_msg);
+ros::Publisher js1_publisher("/joint_1_state", &js1_msg);
+ros::Publisher js2_publisher("/joint_2_state", &js2_msg);
+ros::Publisher js3_publisher("/joint_3_state", &js3_msg);
+ros::Publisher js4_publisher("/joint_4_state", &js4_msg);
+ros::Publisher js5_grip_publisher("/joint_5_grip_state", &js5_grip_msg);
+ros::Subscriber<std_msgs::UInt8> pos_subscriber("/pos_topic", &pos_callback);
+ros::Subscriber<std_msgs::UInt16MultiArray> pos_command_subscriber("/pos_command_topic", &pos_command_callback);
+
+// motor pins
+int motor1_pin = 3;       //D3
+int motor2_pin = 5;       //D5
+int motor3_pin = 6;       //D6
+int motor4_pin = 9;       //D9
+int motor5_pin = 10;      //D10
+int motor_grip_pin = 11;  //D11
+
+// servo motor definitions
+Servo motor_joint_1;
+Servo motor_joint_2;
+Servo motor_joint_3;
+Servo motor_joint_4;
+Servo motor_joint_5;
+Servo motor_gripper;
+
+// limit of motors
+int joint_min_limits[5] = { 0, 20, 30, 30, 30 };
+int joint_max_limits[5] = { 180, 180, 180, 180, 130 };
+int gripper_limits[2] = { 0, 0 };
+
+void setup() {
+
+  // ros init
+  nh.initNode();
+  nh.advertise(js0_publisher);
+  nh.advertise(js1_publisher);
+  nh.advertise(js2_publisher);
+  nh.advertise(js3_publisher);
+  nh.advertise(js4_publisher);
+  nh.subscribe(pos_subscriber);
+  nh.subscribe(pos_command_subscriber);
+  angle_command_msg.data_length = 5;
+
+  // servo init
+  motor_joint_1.attach(motor1_pin);
+  motor_joint_2.attach(motor2_pin);
+  motor_joint_3.attach(motor3_pin);
+  motor_joint_4.attach(motor4_pin);
+  motor_joint_5.attach(motor5_pin);
+  motor_gripper.attach(motor_grip_pin);
+
+  // serial monitor
+  //Serial.begin(9600);
+
+  // go first positions
+  //go_up_home();
+  go_closing_pose();
+
+}
+
+void loop() {
+
+  read_all_motors();
+  publish_joint_states();
+  nh.spinOnce();
+  delay(20);
+
+}
+
+void read_all_motors() {
+  js0_msg.data = motor_joint_1.read();
+  js1_msg.data = motor_joint_2.read();
+  js2_msg.data = motor_joint_3.read();
+  js3_msg.data = motor_joint_4.read();
+  js4_msg.data = motor_joint_5.read();
+  //js5_grip_msg.data = motor_gripper.read(); 
+}
+
+void publish_joint_states() {
+  js0_publisher.publish( &js0_msg );
+  js1_publisher.publish( &js1_msg );
+  js2_publisher.publish( &js2_msg );
+  js3_publisher.publish( &js3_msg );
+  js4_publisher.publish( &js4_msg );
+  //js5_grip_publisher.publish( &js5_grip_msg );
+}
+
+void go_to_target(int j1, int j2, int j3, int j4, int j5) {
+
+  int current_j1 = motor_joint_1.read();
+  int current_j2 = motor_joint_2.read();
+  int current_j3 = motor_joint_3.read();
+  int current_j4 = motor_joint_4.read();
+  int current_j5 = motor_joint_5.read();
+
+  int directions[5];
+
+  if (current_j1 == j1) { directions[0] = 0; }
+  else if (j1 > current_j1) { directions[0] = 1; }
+  else { directions[0] = -1; }
+
+  if (current_j2 == j2) { directions[1] = 0; }
+  else if (j2 > current_j2) { directions[1] = 1; }
+  else { directions[1] = -1; }
+
+  if (current_j3 == j3) { directions[2] = 0; }
+  else if (j3 > current_j3) { directions[2] = 1; }
+  else { directions[2] = -1; }
+
+  if (current_j4 == j4) { directions[3] = 0; }
+  else if (j4 > current_j4) { directions[3] = 1; }
+  else { directions[3] = -1; }
+
+  if (current_j5 == j5) { directions[4] = 0; }
+  else if (j5 > current_j5) { directions[4] = 1; }
+  else { directions[4] = -1; }
+
+  int i = 0;
+  while (true) {
+
+    if (motor_joint_1.read() != j1) {
+      motor_joint_1.write(current_j1 + i*directions[0]);
+    }
+
+    if (motor_joint_2.read() != j2) {
+      motor_joint_2.write(current_j2 + i*directions[1]);
+    }
+
+    if (motor_joint_3.read() != j3) {
+      motor_joint_3.write(current_j3 + i*directions[2]);
+    }
+
+    if (motor_joint_4.read() != j4) {
+      motor_joint_4.write(current_j4 + i*directions[3]);
+    }
+
+    if (motor_joint_5.read() != j5) {
+      motor_joint_5.write(current_j5 + i*directions[4]);
+    }
+
+    if ( (motor_joint_1.read()==j1) && (motor_joint_2.read()==j2) && (motor_joint_3.read()==j3) && (motor_joint_4.read()==j4) && (motor_joint_5.read()==j5) )
+    {
+      break;
+    }
+
+    read_all_motors();
+    publish_joint_states();
+
+    i = i + 1;
+    delay(18);
+
+  }
+
+}
+
+void go_closing_pose() {
+  go_to_target(90, 180, 0, 120, 135);
+}
+
+void go_up_home() {
+  go_to_target(90, 100, 140, 90, 30);
+}

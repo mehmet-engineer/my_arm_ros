@@ -1,0 +1,18 @@
+<launch>
+
+    <param name="robot_description" textfile="$(find my_arm_description)/urdf/arduino_arm.urdf"/>
+
+    <node name="rosserial" pkg="rosserial_arduino" type="serial_node.py"> 
+        <param name="port" value="/dev/ttyACM0" />
+        <param name="_baud" value="57600" />
+    </node>
+
+    <node name="js_publisher" pkg="arm_control" type="js_publisher.py"/>
+    <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher"/>
+
+    <arg name="rvizconfig" default="$(find arm_control)/rviz/control.rviz"/>
+    <node name="rviz" pkg="rviz" type="rviz" args="-d $(arg rvizconfig)"/>
+
+    <!-- export LIBGL_ALWAYS_SOFTWARE=1 -->
+
+</launch>
