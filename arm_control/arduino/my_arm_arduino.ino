@@ -15,6 +15,7 @@ std_msgs::UInt8 js2_msg;
 std_msgs::UInt8 js3_msg;
 std_msgs::UInt8 js4_msg;
 std_msgs::UInt8 js5_grip_msg;
+std_msgs::UInt8 gripper_command_msg;
 
 void pos_callback(const std_msgs::UInt8 &pos_msg) {
   if (pos_msg.data == 1) {
@@ -22,6 +23,15 @@ void pos_callback(const std_msgs::UInt8 &pos_msg) {
   }
   if (pos_msg.data == 2) {
     go_up_home();
+  }
+}
+
+void gripper_command_callback(const std_msgs::UInt8 &gripper_command_msg) {
+  if (gripper_command_msg.data == 1) {
+    open_gripper();
+  }
+  if (gripper_command_msg.data == 2) {
+    close_gripper();
   }
 }
 
@@ -36,6 +46,7 @@ ros::Publisher js3_publisher("/joint_3_state", &js3_msg);
 ros::Publisher js4_publisher("/joint_4_state", &js4_msg);
 ros::Publisher js5_grip_publisher("/joint_5_grip_state", &js5_grip_msg);
 ros::Subscriber<std_msgs::UInt8> pos_subscriber("/pos_topic", &pos_callback);
+ros::Subscriber<std_msgs::UInt8> gripper_subscriber("/gripper_command_topic", &gripper_command_callback);
 ros::Subscriber<std_msgs::UInt16MultiArray> pos_command_subscriber("/pos_command_topic", &pos_command_callback);
 
 // motor pins
@@ -55,9 +66,9 @@ Servo motor_joint_5;
 Servo motor_gripper;
 
 // limit of motors
-int joint_min_limits[5] = { 0, 20, 30, 30, 30 };
-int joint_max_limits[5] = { 180, 180, 180, 180, 130 };
-int gripper_limits[2] = { 0, 0 };
+int joint_min_limits[5] = { 0, 20, 30, 30, 0 };
+int joint_max_limits[5] = { 180, 180, 180, 180, 90 };
+int gripper_limits[2] = { 0, 50 };
 
 void setup() {
 
@@ -68,8 +79,10 @@ void setup() {
   nh.advertise(js2_publisher);
   nh.advertise(js3_publisher);
   nh.advertise(js4_publisher);
+  nh.advertise(js5_grip_publisher);
   nh.subscribe(pos_subscriber);
   nh.subscribe(pos_command_subscriber);
+  nh.subscribe(gripper_subscriber);
   angle_command_msg.data_length = 5;
 
   // servo init
@@ -85,8 +98,9 @@ void setup() {
 
   // go first positions
   //go_up_home();
+  open_gripper();
   go_closing_pose();
-
+  
 }
 
 void loop() {
@@ -98,13 +112,25 @@ void loop() {
 
 }
 
+void open_gripper() {
+
+  motor_gripper.write(0);
+
+}
+
+void close_gripper() {
+
+  motor_gripper.write(50);
+
+}
+
 void read_all_motors() {
   js0_msg.data = motor_joint_1.read();
   js1_msg.data = motor_joint_2.read();
   js2_msg.data = motor_joint_3.read();
   js3_msg.data = motor_joint_4.read();
   js4_msg.data = motor_joint_5.read();
-  //js5_grip_msg.data = motor_gripper.read(); 
+  js5_grip_msg.data = motor_gripper.read(); 
 }
 
 void publish_joint_states() {
@@ -113,7 +139,7 @@ void publish_joint_states() {
   js2_publisher.publish( &js2_msg );
   js3_publisher.publish( &js3_msg );
   js4_publisher.publish( &js4_msg );
-  //js5_grip_publisher.publish( &js5_grip_msg );
+  js5_grip_publisher.publish( &js5_grip_msg );
 }
 
 void go_to_target(int j1, int j2, int j3, int j4, int j5) {
@@ -178,16 +204,16 @@ void go_to_target(int j1, int j2, int j3, int j4, int j5) {
     publish_joint_states();
 
     i = i + 1;
-    delay(18);
+    delay(15);
 
   }
 
 }
 
 void go_closing_pose() {
-  go_to_target(90, 180, 0, 120, 135);
+  go_to_target(90, 180, 0, 120, 0);
 }
 
 void go_up_home() {
-  go_to_target(90, 100, 140, 90, 30);
+  go_to_target(90, 100, 140, 90, 90);
 }
