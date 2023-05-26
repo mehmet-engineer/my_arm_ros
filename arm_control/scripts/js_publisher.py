@@ -33,10 +33,10 @@ class JsPublisher():
         self.j0 = math.radians(msg.data)
         
     def js1_callback(self, msg):
-        self.j1 = math.radians(msg.data-5)
+        self.j1 = math.radians(msg.data)
     
     def js2_callback(self, msg):
-        self.j2 = math.radians(msg.data+30)
+        self.j2 = math.radians(msg.data)
     
     def js3_callback(self, msg):
         self.j3 = math.radians(msg.data)
@@ -45,7 +45,7 @@ class JsPublisher():
         self.j4 = math.radians(msg.data)
     
     def js_grip_callback(self, msg):
-        self.j_grip = math.radians(msg.data-5)
+        self.j_grip = math.radians(msg.data-10)
     
     def init_publisher(self):
         joint_names = ['joint_1', 'joint_2', 'joint_3', 'joint_4', 'joint_5', 'gripper_joint']
