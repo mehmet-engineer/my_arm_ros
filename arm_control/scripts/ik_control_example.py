@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 
+import rospy
 import math
+from std_msgs.msg import UInt16MultiArray, UInt8
 
 class InverseKinematics():
     
@@ -23,9 +25,9 @@ class InverseKinematics():
         j3 = 0
         j4 = 0
         j5 = 0
-        if (abs(x) > 0.3) or (abs(x) < 0.12):
+        if (abs(x) > 0.3):
             raise ValueError("There is no ik solution! Robot can access 0.12m - 0.3m radius. Please check X target.")
-        elif (y > 0.3) or (y < 0.12):
+        elif (y > 0.3):
             raise ValueError("There is no ik solution! Robot can access 0.12m - 0.3m radius. Please check Y target.")
         elif math.sqrt(abs(x)**2 + y**2) > 0.3:
             raise ValueError("There is no ik solution! Robot can access max 0.3 m radius.")
@@ -76,5 +78,38 @@ class InverseKinematics():
         print("radius distance:", round(distance,3))
         return [j1, j2, j3, j4, j5]
 
-#robot = InverseKinematics()
-#print(robot.calculate_ik(-0.25, 0.15))
+def main():
+    rospy.init_node("ik_example_node")
+    pos_publisher = rospy.Publisher("/pos_command_topic", UInt16MultiArray, queue_size=1)
+    gripper_publisher = rospy.Publisher("/gripper_command_topic", UInt8, queue_size=1)
+
+    robot = InverseKinematics()
+    """ your codes to calculate x and y """
+    x = 0.28
+    y = 0.02
+    angles = robot.calculate_ik(x, y)
+    
+    pos_msg = UInt16MultiArray()
+    pos_msg.data = [0, 0, 0, 0, 0]
+    pos_msg.data[0] = angles[0]
+    pos_msg.data[1] = angles[1]
+    pos_msg.data[2] = angles[2]
+    pos_msg.data[3] = angles[3]
+    pos_msg.data[4] = angles[4]
+
+    open_grip_msg = UInt8()
+    open_grip_msg.data = 1
+    close_grip_msg = UInt8()
+    close_grip_msg.data = 2
+
+    rospy.loginfo("going kinematic target X:%f and Y:%f ...", x, y)
+    rospy.loginfo("calculated angle target J0:%d J1:%d J3:%d J4:%d J5:%d", angles[0], angles[1], angles[2], angles[3], angles[4])
+    pos_publisher.publish(pos_msg)
+    gripper_publisher.publish(close_grip_msg)
+
+
+if __name__ == '__main__':
+    try:
+        main()
+    except rospy.ROSInterruptException:
+        print("ROS ik example closed.")
